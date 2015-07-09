@@ -331,11 +331,19 @@
 #ifdef CUDARTAPI
 
 #ifndef CUDACHECKERR
-#define CUDACHECKERR(err)			if(cudaSuccess!=err){printf("%s in %s at line %d\n", cudaGetErrorString(err), __FILE__, __LINE__);}
+#define CUDACHECKERR(err)			if(cudaSuccess!=(err)){printf("%s in %s at line %d\n", cudaGetErrorString((err)), __FILE__, __LINE__);}
 #endif
 
 #ifndef CUDA_DELETE
-#define CUDA_DELETE(x)				if(x){CUDACHECKERR(cudaFree(x));}
+#define CUDA_DELETE(x)				if((x)){CUDACHECKERR(cudaFree((x)));}
+#endif
+
+#ifndef CUDA_MALLOC
+#define CUDA_MALLOC(dev, size)		CUDA_DELETE(*(dev));CUDACHECKERR(cudaMalloc((void**)(dev), size));
+#endif
+
+#ifndef CUDA_MEMCPY
+#define CUDA_MEMCPY(dst, src, size, type)	CUDACHECKERR(cudaMemcpy(dst, src, size, type));
 #endif
 
 #endif
