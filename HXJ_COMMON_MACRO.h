@@ -71,8 +71,16 @@
 //delete/free and new/malloc
 //------------------------------------------------
 #ifndef		HXJ_DELETE
-#define		HXJ_DELETE(x)			if(x){delete x;x=NULL;}
+#define		HXJ_DELETE(x)			if(x){delete x; x = NULL;}
 #endif
+
+#ifndef		HXJ_DELETE_ARR
+#define		HXJ_DELETE_ARR(x)		if(x){delete[] x; x= NULL;}
+#endif // HXJ_DELETE_ARR
+
+
+#endif // DEBUG
+
 
 #ifndef		HXJ_FREE
 #define		HXJ_FREE(x)				if(x){free(x);x=NULL;}
@@ -82,6 +90,7 @@
 #define		HXJ_INITIALIZED_NEW(var, type, value, size) var = new type[size]; \
 													memset(var, value, size*sizeof(type))
 #endif
+
 //------------------------------------------------
 
 
@@ -282,7 +291,7 @@
 											mw->resize(img.size());								\
 											mw->setWindowTitle(title);							\
 											mw->show();											\
-										}while(0)
+																																								}while(0)
 #endif
 
 #else
@@ -308,11 +317,25 @@
 //------------------------------------------------
 #ifndef		HXJ_DELETE_POINT_VECTOR
 #define		HXJ_DELETE_POINT_VECTOR(v)		for(size_t i = 0; i < v.size(); i++)\
-											{ HXJ_DELETE(v[i]) }\
+																																												{ HXJ_DELETE(v[i]) }\
 												v.clear();
 #endif
 //------------------------------------------------
 
 
+
+
+//------------------------------------------------
+//CUDA related
+//------------------------------------------------
+#ifdef CUDARTAPI
+
+#ifndef CUDACHECKERR
+#define CUDACHECKERR(err)			if(cudaSuccess!=err){printf("%s in %s at line %d\n", cudaGetErrorString(err), __FILE__, __LINE__);}
+#endif
+
+#ifndef CUDA_DELETE
+#define CUDA_DELETE(x)				if(x){CUDACHECKERR(cudaFree(x));}
+#endif
 
 #endif
